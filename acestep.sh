@@ -5,6 +5,7 @@ cd "$(dirname "$0")"
 case "${1:-}" in
   up)   docker stop llama-swap >/dev/null
         pkill -f "acestep --server-name" || true
+        pkill -f "main.py --listen 0.0.0.0 --port 8188" || true  # LTX/ComfyUI
         nohup ~/.local/bin/uv run acestep --server-name 0.0.0.0 --port 7860 --init_service true > gradio.log 2>&1 < /dev/null &
         echo "starting, log: $PWD/gradio.log, http://192.168.50.205:7860" ;;
   down) pkill -f "acestep --server-name" || true; docker start llama-swap >/dev/null ;;
