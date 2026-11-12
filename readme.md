@@ -14,6 +14,15 @@ ssh 192.168.50.205 '~/repos/ACE-Step-1.5/acestep.sh down'
  http://192.168.50.205:7860
   http://enki.local:7860
 
+## Back to llama-swap
+
+ACE-Step, LTX and `llama-swap` take turns on the GPUs. To get `llama-swap` back, run `down` for whichever one is up. That stops it and starts `llama-swap`:
+
+ssh 192.168.50.205 '~/repos/ACE-Step-1.5/acestep.sh down'
+ssh 192.168.50.205 '~/repos/ComfyUI/ltx.sh down'
+
+If you're not sure which is running, run both; it's safe. To check: `ssh 192.168.50.205 'docker ps --filter name=llama-swap'`.
+
 ## LTX-2.5 (video)
 
 LTX-2.5 runs inside ComfyUI at `~/repos/ComfyUI` on enki. `ltx.sh up` starts it (it stops `llama-swap` and ACE-Step). `ltx.sh down` stops it and starts `llama-swap` again. Log in `~/repos/ComfyUI/comfyui.log`.

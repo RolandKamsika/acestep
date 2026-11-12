@@ -1,3 +1,4 @@
+#video generation with lip-sync
 #!/usr/bin/env bash
 # LTX-2.5 runs in ComfyUI. It can't share the GPUs with ACE-Step or llama-swap: "up" stops both, "down" brings llama-swap back.
 set -euo pipefail

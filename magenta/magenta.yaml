@@ -1,0 +1,37 @@
+# On demand only: it shares the GPUs with llama-swap, so start and stop it with magenta.sh
+include:
+  - /home/roland/docker/common/volumes.yaml
+
+services:
+  magenta:
+    build: ./magenta
+    image: magenta-rt:local
+    container_name: magenta
+    environment:
+      - GRADIO_SERVER_NAME=0.0.0.0 # the app listens on 127.0.0.1 otherwise
+      - MAGENTA_HOME=/data/home
+      - HF_HOME=/data/hf
+      - TORCHINDUCTOR_CACHE_DIR=/data/inductor # keeps compiled kernels, so later starts warm up faster
+      - MRT_LOAD=small # small (~1.1 GB), base (~9.2 GB) or both
+    secrets:
+      - hf_token
+    ports:
+      - 7860:7860
+    volumes:
+      - magenta_data:/data
+    restart: "no"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    labels:
+      caddy: magenta.kinexa.co.uk
+      caddy.reverse_proxy: "{{upstreams 7860}}"
+    networks:
+      - caddy
+secrets:
+  hf_token:
+    file: /home/roland/compose-files/hf-token.txt

@@ -1,3 +1,4 @@
+#Music Generation based on input track
 #!/usr/bin/env bash
 # ACE-Step and llama-swap can't both fit on the GPUs: "up" swaps llama-swap out, "down" swaps it back.
 set -euo pipefail
