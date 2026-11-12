@@ -1,0 +1,22 @@
+# On demand only: it shares the GPUs with llama-swap, so start and stop it with uvr5.sh
+name: uvr5
+include:
+  - /home/roland/docker/common/volumes.yaml
+
+services:
+  uvr5:
+    build: ./uvr5
+    image: uvr5-ui:local
+    container_name: uvr5
+    ports:
+      - 7861:7861
+    volumes:
+      - uvr5_data:/data
+    restart: "no"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

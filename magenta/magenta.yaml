@@ -1,4 +1,5 @@
 # On demand only: it shares the GPUs with llama-swap, so start and stop it with magenta.sh
+name: magenta
 include:
   - /home/roland/docker/common/volumes.yaml
 

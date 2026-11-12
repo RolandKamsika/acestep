@@ -1,0 +1,31 @@
+# ACE-Step 1.5 built from its own upstream Dockerfile, at the commit tested on enki (bump the #ref to update).
+# On demand only: it shares the GPUs with llama-swap, so start and stop it with acestep.sh
+name: acestep
+include:
+  - /home/roland/docker/common/volumes.yaml
+
+services:
+  acestep:
+    build: https://github.com/ACE-Step/ACE-Step-1.5.git#ca1e85fe9430179831e6bc6be790c332190a3866
+    image: acestep:local
+    container_name: acestep
+    environment:
+      - ACESTEP_LM_MODEL_PATH=acestep-5Hz-lm-1.7B # upstream default is 4B, which isn't downloaded
+      - ACESTEP_LLM_BACKEND=vllm # faster than upstream's pt default; the image has gcc, which nano-vllm needs
+      - UV_NO_SYNC=1 # the image is already synced; otherwise uv run rebuilds nano-vllm on every start
+      - HF_HOME=/data/hf
+    ports:
+      - 7860:7860
+    volumes:
+      - { type: volume, source: acestep_data, target: /app/checkpoints, volume: { subpath: checkpoints } }
+      - { type: volume, source: acestep_data, target: /app/gradio_outputs, volume: { subpath: gradio_outputs } }
+      - { type: volume, source: acestep_data, target: /data/hf, volume: { subpath: hf } }
+    shm_size: 2gb
+    restart: "no"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

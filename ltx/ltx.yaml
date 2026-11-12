@@ -1,0 +1,23 @@
+# On demand only: it shares the GPUs with llama-swap, so start and stop it with ltx.sh
+name: ltx
+include:
+  - /home/roland/docker/common/volumes.yaml
+
+services:
+  ltx:
+    build: ./ltx
+    image: comfyui-ltx:local
+    container_name: ltx
+    ports:
+      - 8188:8188
+    volumes:
+      - ltx_data:/data
+    shm_size: 2gb
+    restart: "no"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

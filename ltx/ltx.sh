@@ -1,14 +1,14 @@
-#video generation with lip-sync
 #!/usr/bin/env bash
-# LTX-2.5 runs in ComfyUI. It can't share the GPUs with ACE-Step or llama-swap: "up" stops both, "down" brings llama-swap back.
+# Video generation with lip-sync: LTX-2.5 in ComfyUI.
+# It can't share the GPUs with ACE-Step or llama-swap: "up" stops them, "down" brings llama-swap back.
+#~/docker/ltx/stack/ltx.sh up     # http://192.168.50.205:8188
+#~/docker/ltx/stack/ltx.sh down
 set -euo pipefail
 cd "$(dirname "$0")"
 case "${1:-}" in
-  up)   docker stop llama-swap >/dev/null
-        pkill -f "acestep --server-name" || true
-        pkill -f "main.py --listen 0.0.0.0 --port 8188" || true
-        nohup .venv/bin/python main.py --listen 0.0.0.0 --port 8188 > comfyui.log 2>&1 < /dev/null &
-        echo "starting, log: $PWD/comfyui.log, http://192.168.50.205:8188" ;;
-  down) pkill -f "main.py --listen 0.0.0.0 --port 8188" || true; docker start llama-swap >/dev/null ;;
+  up)   docker stop llama-swap acestep magenta >/dev/null 2>&1 || true
+        docker compose -f ltx.yaml up -d --build
+        echo "starting, logs: docker logs -f ltx, http://192.168.50.205:8188" ;;
+  down) docker compose -f ltx.yaml down; docker start llama-swap >/dev/null ;;
   *)    echo "usage: $0 up|down" >&2; exit 1 ;;
 esac
